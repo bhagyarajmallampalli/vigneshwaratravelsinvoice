@@ -1,0 +1,231 @@
+<div class="container">
+    <div *ngIf="hideTransTable" class="row row-no-margin">
+        <div class="col-xs-12 col-sm-3 ">
+          <img class="img-responsive" [src]="vigneshaImage"/>
+        </div>
+        <div class="col-xs-12 col-sm-6 col-no-padding">
+          <img class="img-responsive" [src]="titleImage" />
+        </div>
+        <div class="col-xs-12 col-sm-3 ">
+            <img class="img-responsive rounded-top" [src]="carImage" />
+          </div>
+    </div>
+   
+    <div class="row">
+        <toaster-container [toasterconfig]="config">
+        </toaster-container>
+        <div *ngIf="hideTransTable" class="col-xs-12">
+            <toaster-container [toasterconfig]="config">
+        </toaster-container>
+            <div class="form-group">
+                <span class="label label-default">Choose transaction date</span>
+                <input class="form-control" [(ngModel)]="setTransDate" type="date" name="transDate" value="{{ transDate | date: 'dd/MM/yyyy' }}"/>
+              </div>
+              
+              <div class="form-group">
+              <span class="label label-default">Choose Your Vehicle</span>
+          <br/><input autocomplete class="form-control" (selectEvent)="vehicleSelected($event)" [items]="vehicles" [config]="configVehicle" [(ngModel)]="selectedVehicle"/>
+
+          <br/><input type="button"  class="btn-primary" (click)="generateInvoice()" value="Generate Invoice">
+                </div>
+                <div class="form-group">
+                 
+                    <span class="label label-default">Choose guest</span>   
+                    <br/><input autocomplete class="form-control" (selectEvent)="customerSelected($event)" [items]="customers" [config]="configCustomers" [(ngModel)]="selectedCustomer"/> 
+                </div>
+          <div class="form-group">
+              <span class="label label-default">Choose guest phone nubmer</span>
+              <input class="form-control" [(ngModel)]="guestPhoneNo"/> 
+              </div>
+          <div class="form-group">
+                 
+          <span class="label label-default">Choose department</span> <br/> 
+          <input autocomplete class="form-control" (selectEvent)="deptSelected($event)" [items]="depts" [config]="configDepts" [(ngModel)]="selectedDept"/>    
+          </div>
+          <div class="form-group">      
+              <span class="label label-default">Customer Name</span>
+              <input type="text" [(ngModel)]="mainCustomerName" class="form-control"/>
+              </div>
+          <div class="form-group">      
+          <span class="label label-default">Enter Invoice Number</span>
+          <input type="text" [(ngModel)]="invoiceNumber" class="form-control"/>
+          </div>
+          <div class="form-group">   
+              <span class="label label-default">Enter Start KM</span>
+              <input type="text" [(ngModel)]="startKM" (blur)="calcTotalKM()" class="form-control"/>
+              </div>
+          
+          <div class="form-group">
+              <span class="label label-default">Enter End KM</span>
+              <input type="text" [(ngModel)]="endKM" (blur)="calcTotalKM()" class="form-control"/>
+          </div>
+          <div class="form-group">
+              <span class="label label-default">Total KMs</span>
+              <input type="text" [(ngModel)]="totalKM" (blur)="calcFuelCharges()" class="form-control"/>
+          </div>
+          
+          <div class="form-group">
+              <span class="label label-default">Enter Start Time</span>
+              <input type="time" [(ngModel)]="startTime" atp-time-picker value="08:00" (change)="calcTotalHours()"/>
+          </div>
+          <div class="form-group">   
+              <span class="label label-default">Enter End Time</span>
+              <input type="time" [(ngModel)]="endTime" atp-time-picker value="19:00" (change)="calcTotalHours()"/>
+          </div>
+          <div class="form-group">   
+              <span class="label label-default">Total hours</span>
+              <input type="text" [(ngModel)]="totalHours" (blur)="calcTotalHours()" class="form-control"/>
+            </div>  
+          <div class="form-group">
+              <span class="label label-default">Journey</span>
+              <input type="text"  [(ngModel)]="journey" class="form-control"/>
+          </div>
+          <div class="form-group">
+              <span class="label label-default">Mileage</span>
+              <input type="text" [(ngModel)]="mileageOfVehicle" (blur)="calcFuelCharges" class="form-control"/>
+          </div>
+          <div class="form-group">
+              <span class="label label-default">Enter cost of the fuel</span>
+              <input type="text" [(ngModel)]="fuelCost" (blur) ="calcFuelCharges()" class="form-control"/>
+          </div>
+          <div class="form-group">
+              <span class="label label-default">Enter Fuel Charges</span>
+              <input type="text" [(ngModel)]="fuelCharges" (blur) ="calcTotalAmount()" class="form-control"/>
+          </div>
+          <div class="form-group">
+              <span class="label label-default">Enter Fixed Rents</span>
+              <input type="text"  [(ngModel)]="fixedRent" (blur) ="calcTotalAmount()" class="form-control"/>
+          </div>
+          <div class="form-group">
+              <span class="label label-default">Enter Toll Gate charges</span>
+              <input type="text"  [(ngModel)]="tollGateCharges" (blur) ="calcTotalAmount()" class="form-control"/>
+          </div>
+          <div class="form-group">
+              <span class="label label-default">Enter Driver Batta</span>
+              <input type="text"  [(ngModel)]="driverBatta" (blur) ="calcTotalAmount()" class="form-control"/>
+          </div>
+          <div class="form-group">
+              <span class="label label-default">Total amount</span>
+              <input type="text"  [(ngModel)]="totalAmount" (blur) ="calcTotalAmount()" class="form-control"/>
+          </div>
+        </div>
+        <div *ngIf="hideTransTable" class="col-xs-12">
+            
+            <input type="button"  class="btn-primary" (click)="submitDetails()" value="Submit"/>
+        </div>
+        <div *ngIf="showInvoiceTable" class="col-xs-12">
+          <br/>
+              <button type="button" class="close" (click)="showTransTable()" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            <!--input type="button"  class="close" aria-label="Close"  value="showTrans"/-->
+        </div>
+        
+        <div *ngIf="showInvoiceTable" class="col-xs-12 table-responsive">
+            <table class="border border-primary" style="border-collapse: separate;
+            border-spacing: 15px;">
+                <tbody>
+                  <tr>
+                    <td scope="row">No: {{invoice.dutySlipNo}}</td>
+                    <td colspan="3" class="text-center">Cash/Credit bill</td>
+                    <td colspan="2" class="text-right">Date: {{ selectedTransDate | date: 'dd/MM/yyyy'}}</td>
+                  </tr>
+                  <tr>
+                      <td scope="row"><img class="img-responsive" [src]="vigneshaImage"/></td>
+                      <td colspan="4"><img class="img-responsive" [src]="invoiceTitle" /></td>
+                      <td><img class="img-responsive rounded-top" [src]="carImage" /></td>
+                    </tr>
+                      <tr>
+                          <td scope="row" colspan="2" class="text-right">Customer Name:</td>
+                          <td>{{invoice.customerName}}</td>
+                          <td class="text-right">Vehicile No: </td>
+                          <td>{{invoice.vehicleNumber}}</td>
+                          <td>&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td scope="row" colspan="2" class="text-right">Gues Name:</td>
+                            <td colspan="1">{{invoice.guestName}}</td>
+                            <td colspan="1" class="text-right">Vehicle Type:</td>
+                            <td>{{invoice.vehicleType}}</td>
+                            <td>&nbsp;</td>
+                          </tr>
+                          <tr>
+                              <td scope="row" colspan="2" class="text-right">Guest number:</td>
+                              <td colspan="1">{{invoice.guestNumber}}</td>
+                              <td colspan="1" class="text-right">Booked by: </td>
+                              <td>{{invoice.bookedBy}}</td>
+                              <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td scope="row" colspan="2" class="text-right">Journey:</td>
+                                <td colspan="1">{{invoice.journey}}</td>
+                                <td colspan="1" class="text-right">Hire charges:</td>
+                                <td>{{invoice.hireCharges}}</td>
+                                <td>&nbsp;</td>
+                              </tr>
+                              <tr>
+                                  <td scope="row" colspan="2" class="text-right">Starting KMs:</td>
+                                  <td colspan="1">{{invoice.startKMs}}</td>
+                                  <td colspan="1" class="text-right">Diesel Charges:</td>
+                                  <td>{{invoice.dieselCharges}}</td>
+                                  <td>&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td scope="row" colspan="2" class="text-right">Ending KMs:</td>
+                                    <td colspan="1">{{invoice.endKMs}}</td>
+                                    <td colspan="1" class="text-right">Driver Allowances:</td>
+                                    <td>{{invoice.driverAllowances}}</td>
+                                    <td>&nbsp;</td>
+                                  </tr>
+                                  <tr>
+                                      <td scope="row" colspan="2" class="text-right">Total KMs:</td>
+                                      <td colspan="1">{{invoice.totalKMs}}</td>
+                                      <td colspan="1" class="text-right">Toll/Parking:</td>
+                                      <td>{{invoice.tollGate}}</td>
+                                      <td>&nbsp;</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row" colspan="2" class="text-right">Starting time:</td>
+                                        <td colspan="1">{{invoice.startingTime}}</td>
+                                        <td colspan="1" class="text-right">Total:</td>
+                                        <td>{{invoice.total}}</td>
+                                        <td>&nbsp;</td>
+                                      </tr>
+                                      <tr>
+                                          <td scope="row" colspan="2" class="text-right">Ending Time:</td>
+                                          <td colspan="1">{{invoice.endingTime}}</td>
+                                          <td colspan="1" class="text-right">GRAND TOTAL:</td>
+                                          <td>{{invoice.total}}</td>
+                                          <td>&nbsp;</td>
+                                        </tr>
+                                        <tr>
+                                            <td scope="row" colspan="2" class="text-right">Total time:</td>
+                                            <td colspan="1">{{invoice.totalHours}}</td>
+                                            <td colspan="2" class="text-right">For Vigenswara Travels,</td>
+                                            <td></td>
+                                          </tr>
+        
+                </tbody>
+                <tfoot>
+                  <tr>
+                      <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                      <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                    <td colspan="4">
+                    
+                  <table class="border border-dark">
+                    <tr scope="row">
+                      <td>Pan number:</td><td>AXQPB3539C</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                    </tr>
+                    <tr scope="row">
+                      <td>S Tax Category:</td><td>RENT A CAB</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td>S Tax Number:</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
+                  </table>
+                </td>
+                
+                </tr>
+                </tfoot>
+              </table>
+            
+        </div>
+    </div>
+
+  </div>
